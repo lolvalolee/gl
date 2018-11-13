@@ -2,11 +2,11 @@ var chanelsList = {};
 var apiKey = 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd';
 
 function createChatChanelContainer(chanel) {
-    var chatContainer= document.getElementById('chat-conatiner');
-
+    var chatContainer= document.body;
     var container = document.createElement('div');
     chatContainer.append(container);
     container.className = 'chatBlock';
+    container.onmousedown = chatContainerOnMouseDown;
 
     var chatTitle = document.createElement('div');
     chatTitle.className = 'chatTitle';
@@ -43,9 +43,6 @@ function connectWebSocket() {
     var socket = new WebSocket('ws://vhost3.lnu.se:20080/socket/');
     socket.addEventListener('message', function(event) {
         var message = JSON.parse(event.data);
-        console.log('receive message');
-        console.log(event.channel);
-        console.log(chanelsList);
         if (chanelsList[message.channel]) {
             console.log('append message');
             chanelsList[message.channel].messages.push(
@@ -70,8 +67,6 @@ function connectWebSocket() {
             messageContainer.append(messageAuthor);
             messageContainer.append(messageText);
             chanelsList.container.append(messageContainer);
-
-            console.log(messageContainer, messageAuthor, messageText);
         }
     });
 
@@ -88,3 +83,45 @@ function connectChanel() {
     chanelsList[chanelName] = {'messages': []};
     createChatChanelContainer(chanelName);
 }
+
+// drag and drop
+
+chatContainerOnDragStart = function() {
+    return false;
+};
+
+function getCoords(elem) {   // кроме IE8-
+    var box = elem.getBoundingClientRect();
+    return {
+        top: box.top + pageYOffset,
+        left: box.left + pageXOffset
+    };
+}
+
+function chatContainerOnMouseDown(event) {
+
+    var chatBlock = this;
+    var coords = getCoords(chatBlock);
+    var shiftX = event.pageX - coords.left;
+    var shiftY = event.pageY - coords.top;
+
+    function moveAt(e) {
+        chatBlock.style.left = e.pageX - shiftX + 'px';
+        chatBlock.style.top = e.pageY - shiftY + 'px';
+    }
+
+    chatBlock.style.position = 'absolute';
+    document.body.appendChild(chatBlock);
+    moveAt(event);
+
+    chatBlock.style.zIndex = 1000;
+    document.onmousemove = function(e) {
+        moveAt(e);
+    };
+
+    chatBlock.onmouseup = function() {
+        document.onmousemove = null;
+        chatBlock.onmouseup = null;
+    };
+}
+
