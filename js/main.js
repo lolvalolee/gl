@@ -1,5 +1,5 @@
 var chanelsList = {};
-var apiKey = 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd'
+var apiKey = 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd';
 
 function createChatChanelContainer(chanel) {
     var chatContainer= document.getElementById('chat-conatiner');
@@ -10,6 +10,7 @@ function createChatChanelContainer(chanel) {
 
     var chatTitle = document.createElement('div');
     chatTitle.className = 'chatTitle';
+    chatTitle.htmlText = chanel;
 
     var chatContent = document.createElement('div');
     chatContent.className = 'chatContent';
@@ -19,6 +20,17 @@ function createChatChanelContainer(chanel) {
 
     var sendMessageButton = document.createElement('button');
     sendMessageButton.innerHTML = 'Send message';
+    sendMessageButton.onclick = function (event) {
+        var container = event.target.parentElement;
+        var textMessage = container.getElementsByClassName('chatMessageInput')[0].value;
+        connection.send(JSON.stringify({
+            "type": "message",
+            "data" : textMessage,
+            "username": "Galya",
+            "channel": chanel,
+            "key": apiKey
+        }))
+    };
     container.append(chatTitle);
     container.append(chatContent);
     container.append(messageInput);
@@ -45,6 +57,7 @@ function connectWebSocket() {
 
     return socket;
 }
+
 var connection = connectWebSocket();
 function connectChanel(event) {
     var chanelName = document.getElementById('chanel-name').value;
