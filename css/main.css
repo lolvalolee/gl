@@ -1,0 +1,13 @@
+.chatBlock {
+    border: black;
+    border-width: 1px;
+    border-style: double;
+    width: 150px;
+    min-height: 150px;
+}
+.chatTitle{
+    min-height: 20px;
+}
+.chatMessageInput {
+    max-width: 100px;
+}
