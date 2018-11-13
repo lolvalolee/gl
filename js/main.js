@@ -10,7 +10,7 @@ function createChatChanelContainer(chanel) {
 
     var chatTitle = document.createElement('div');
     chatTitle.className = 'chatTitle';
-    chatTitle.htmlText = chanel;
+    chatTitle.innerHTML = chanel;
 
     var chatContent = document.createElement('div');
     chatContent.className = 'chatContent';
@@ -35,19 +35,43 @@ function createChatChanelContainer(chanel) {
     container.append(chatContent);
     container.append(messageInput);
     container.append(sendMessageButton);
+
+    chanelsList['container'] = container;
 }
 
 function connectWebSocket() {
     var socket = new WebSocket('ws://vhost3.lnu.se:20080/socket/');
     socket.addEventListener('message', function(event) {
         var message = JSON.parse(event.data);
-        if (chanelsList[event.channel]) {
-            chanelsList[event.channel].messages.push(
+        console.log('receive message');
+        console.log(event.channel);
+        console.log(chanelsList);
+        if (chanelsList[message.channel]) {
+            console.log('append message');
+            chanelsList[message.channel].messages.push(
                 {
                     'data': message.data,
                     'username': message.username
                 }
-            )
+            );
+            chanelsList.container.getElementsByClassName('chatContent');
+            var messageContainer = document.createElement('div');
+            var messageAuthor = document.createElement('span');
+            var messageText = document.createElement('p');
+
+            messageContainer.className = 'message-container';
+
+            messageAuthor.className = 'message-author';
+            messageAuthor.innerHTML = message.username;
+
+            messageText.className = message.text;
+            messageText.innerHTML = message.data;
+
+            messageContainer.append(messageAuthor);
+            messageContainer.append(messageText);
+            chanelsList.container.append(messageContainer);
+
+            console.log(messageContainer, messageAuthor, messageText);
         }
     });
 
@@ -59,15 +83,8 @@ function connectWebSocket() {
 }
 
 var connection = connectWebSocket();
-function connectChanel(event) {
+function connectChanel() {
     var chanelName = document.getElementById('chanel-name').value;
     chanelsList[chanelName] = {'messages': []};
     createChatChanelContainer(chanelName);
-    connection.send(JSON.stringify({
-        "type": "message",
-        "data" : "message text",
-        "username": "Galya",
-        "channel": chanelName,
-        "key": apiKey
-    }));
 }
