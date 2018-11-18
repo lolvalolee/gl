@@ -6,11 +6,11 @@ function createChatChanelContainer(chanel) {
     var container = document.createElement('div');
     chatContainer.append(container);
     container.className = 'chatBlock';
-    container.onmousedown = chatContainerOnMouseDown;
 
     var chatTitle = document.createElement('div');
     chatTitle.className = 'chatTitle';
     chatTitle.innerHTML = chanel;
+    chatTitle.onmousedown = chatContainerOnMouseDown;
 
     var chatContent = document.createElement('div');
     chatContent.className = 'chatContent';
@@ -21,6 +21,7 @@ function createChatChanelContainer(chanel) {
     var sendMessageButton = document.createElement('button');
     sendMessageButton.innerHTML = 'Send message';
     sendMessageButton.onclick = function (event) {
+        console.log('clicked');
         var container = event.target.parentElement;
         var textMessage = container.getElementsByClassName('chatMessageInput')[0].value;
         connection.send(JSON.stringify({
@@ -99,8 +100,7 @@ function getCoords(elem) {   // кроме IE8-
 }
 
 function chatContainerOnMouseDown(event) {
-
-    var chatBlock = this;
+    var chatBlock = this.parentElement;
     var coords = getCoords(chatBlock);
     var shiftX = event.pageX - coords.left;
     var shiftY = event.pageY - coords.top;
