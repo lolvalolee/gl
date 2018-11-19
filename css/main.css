@@ -11,3 +11,6 @@
 .chatMessageInput {
     max-width: 100px;
 }
+.chatTitle {
+    width: 90%;
+}

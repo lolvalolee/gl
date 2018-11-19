@@ -1,7 +1,14 @@
 var chanelsList = {};
 var apiKey = 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd';
 
-function createChatChanelContainer(chanel) {
+function closeChatWindow(chanelName) {
+    this.remove();
+    if (chanelName) {
+        delete chanelsList[chanelName];
+    }
+}
+
+function createEmptyChatContainer() {
     var chatContainer= document.body;
     var container = document.createElement('div');
     chatContainer.append(container);
@@ -9,8 +16,37 @@ function createChatChanelContainer(chanel) {
 
     var chatTitle = document.createElement('div');
     chatTitle.className = 'chatTitle';
-    chatTitle.innerHTML = chanel;
+    chatTitle.innerHTML = 'Enter chanel name';
     chatTitle.onmousedown = chatContainerOnMouseDown;
+
+    var closeChatWindowButton = document.createElement('button');
+    closeChatWindowButton.innerText = 'x';
+    closeChatWindowButton.className = 'close-chat-window-button';
+    closeChatWindowButton.onclick = closeChatWindow.bind(container, undefined);
+
+    var chatName = document.createElement('input');
+    chatName.className = 'chanel-name-input';
+
+    var confirmChatNameButton = document.createElement('button');
+    confirmChatNameButton.innerHTML = 'Connect chat';
+    confirmChatNameButton.onclick = createChanelContainer;
+
+    container.append(chatTitle);
+    container.append(closeChatWindowButton);
+    container.append(chatName);
+    container.append(confirmChatNameButton);
+
+
+}
+
+function createChanelContainer(event) {
+    var container = this.parentElement;
+    var input = container.getElementsByClassName('chanel-name-input')[0];
+    var chanelName = input.value;
+    input.remove(); // remove chanel name input
+    this.remove(); // remove connect chanel button
+    container.getElementsByClassName('chatTitle')[0].innerHTML = chanelName;
+    container.className = 'chatBlock';
 
     var chatContent = document.createElement('div');
     chatContent.className = 'chatContent';
@@ -21,23 +57,24 @@ function createChatChanelContainer(chanel) {
     var sendMessageButton = document.createElement('button');
     sendMessageButton.innerHTML = 'Send message';
     sendMessageButton.onclick = function (event) {
-        console.log('clicked');
         var container = event.target.parentElement;
         var textMessage = container.getElementsByClassName('chatMessageInput')[0].value;
         connection.send(JSON.stringify({
             "type": "message",
             "data" : textMessage,
             "username": "Galya",
-            "channel": chanel,
+            "channel": chanelName,
             "key": apiKey
         }))
     };
-    container.append(chatTitle);
     container.append(chatContent);
     container.append(messageInput);
     container.append(sendMessageButton);
 
     chanelsList['container'] = container;
+
+    var closeChatWindowButton = container.getElementsByClassName('close-chat-window-button');
+    closeChatWindowButton.onclick = closeChatWindow.bind(container, chanelName);
 }
 
 function connectWebSocket() {
