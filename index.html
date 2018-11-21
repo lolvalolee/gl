@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="/js/main.js"></script>
     <link href="/css/main.css" rel="stylesheet" />
 </head>
 <body>
 
-<div style="">
-    <form>
-        <button type="button" onclick="createEmptyChatContainer()">Connect</button>
-    </form>
+<form onsubmit=setName(event) id="username-form">
+    <input name="username">
+    <button type="submit">Set name</button>
+</form>
 
-</div>
 <div id="chat-conatiner">
 
 </div>
-
+<script src="/js/main.js"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 var chanelsList = {};
 var apiKey = 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd';
+var username;
 
 function closeChatWindow(chanelName) {
     this.remove();
@@ -35,8 +36,6 @@ function createEmptyChatContainer() {
     container.append(closeChatWindowButton);
     container.append(chatName);
     container.append(confirmChatNameButton);
-
-
 }
 
 function createChanelContainer(event) {
@@ -55,6 +54,7 @@ function createChanelContainer(event) {
     messageInput.className = 'chatMessageInput';
 
     var sendMessageButton = document.createElement('button');
+
     sendMessageButton.innerHTML = 'Send message';
     sendMessageButton.onclick = function (event) {
         var container = event.target.parentElement;
@@ -62,16 +62,23 @@ function createChanelContainer(event) {
         connection.send(JSON.stringify({
             "type": "message",
             "data" : textMessage,
-            "username": "Galya",
+            "username": username,
             "channel": chanelName,
             "key": apiKey
-        }))
+        }));
+        this.value = ''; // empty textarea
     };
     container.append(chatContent);
     container.append(messageInput);
     container.append(sendMessageButton);
 
-    chanelsList['container'] = container;
+    var messagesContainer = document.createElement('div');
+    container.append(messagesContainer);
+
+
+    chanelsList[chanelName] = {
+        'container': messagesContainer,
+        'messages': []};
 
     var closeChatWindowButton = container.getElementsByClassName('close-chat-window-button');
     closeChatWindowButton.onclick = closeChatWindow.bind(container, chanelName);
@@ -82,14 +89,14 @@ function connectWebSocket() {
     socket.addEventListener('message', function(event) {
         var message = JSON.parse(event.data);
         if (chanelsList[message.channel]) {
-            console.log('append message');
-            chanelsList[message.channel].messages.push(
+            var chanel = chanelsList[message.channel];
+            chanel.messages.push(
                 {
                     'data': message.data,
                     'username': message.username
                 }
             );
-            chanelsList.container.getElementsByClassName('chatContent');
+            chanel.container.getElementsByClassName('chatContent');
             var messageContainer = document.createElement('div');
             var messageAuthor = document.createElement('span');
             var messageText = document.createElement('p');
@@ -104,7 +111,7 @@ function connectWebSocket() {
 
             messageContainer.append(messageAuthor);
             messageContainer.append(messageText);
-            chanelsList.container.append(messageContainer);
+            chanel.container.append(messageContainer);
         }
     });
 
@@ -162,3 +169,28 @@ function chatContainerOnMouseDown(event) {
     };
 }
 
+function showOpenChatWindowButton() {
+    var button = document.createElement('button');
+    button.onclick = createEmptyChatContainer;
+    button.innerHTML = 'Connect';
+
+    document.getElementById('username-form').remove();
+    document.body.append(button);
+}
+
+function setName(event) {
+    event.preventDefault();
+    username = document.getElementsByName('username')[0].value;
+    localStorage.setItem('username', username);
+    showOpenChatWindowButton();
+}
+
+function checkUsernameIsSet(event) {
+    username = localStorage.getItem('username');
+    console.log('called');
+    if (username) {
+        showOpenChatWindowButton();
+    }
+}
+
+document.addEventListener("DOMContentLoaded", checkUsernameIsSet);

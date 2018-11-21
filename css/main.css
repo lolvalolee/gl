@@ -2,7 +2,7 @@
     border: black;
     border-width: 1px;
     border-style: double;
-    width: 150px;
+    width: 180px;
     min-height: 150px;
 }
 .chatTitle{
@@ -13,4 +13,9 @@
 }
 .chatTitle {
     width: 90%;
+    display: inline-block;
+}
+.close-chat-window-button {
+    width: 10%;
+    float: right;
 }
