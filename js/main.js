@@ -30,6 +30,7 @@ function createEmptyChatContainer() {
 
     var confirmChatNameButton = document.createElement('button');
     confirmChatNameButton.innerHTML = 'Connect chat';
+    confirmChatNameButton.className = 'chat-button';
     confirmChatNameButton.onclick = createChanelContainer;
 
     container.append(chatTitle);
@@ -56,6 +57,7 @@ function createChanelContainer(event) {
     var sendMessageButton = document.createElement('button');
 
     sendMessageButton.innerHTML = 'Send message';
+    sendMessageButton.className = 'chat-button';
     sendMessageButton.onclick = function (event) {
         var container = event.target.parentElement;
         var textMessage = container.getElementsByClassName('chatMessageInput')[0].value;
@@ -66,13 +68,14 @@ function createChanelContainer(event) {
             "channel": chanelName,
             "key": apiKey
         }));
-        this.value = ''; // empty textarea
+        textMessage.value = ''; // empty textarea
     };
     container.append(chatContent);
     container.append(messageInput);
     container.append(sendMessageButton);
 
     var messagesContainer = document.createElement('div');
+    messagesContainer.className = 'messages-container';
     container.append(messagesContainer);
 
 
@@ -84,34 +87,38 @@ function createChanelContainer(event) {
     closeChatWindowButton.onclick = closeChatWindow.bind(container, chanelName);
 }
 
+function storeMessage(chanel, message) {
+    var key = username + '-' + chanel + '-chat';
+    var storedMessages = JSON.parse(localStorage.getItem(key)) || [];
+    storedMessages = [message].concat(storedMessages);
+    localStorage.setItem(key, JSON.stringify(storedMessages));
+}
+
 function connectWebSocket() {
     var socket = new WebSocket('ws://vhost3.lnu.se:20080/socket/');
     socket.addEventListener('message', function(event) {
         var message = JSON.parse(event.data);
         if (chanelsList[message.channel]) {
             var chanel = chanelsList[message.channel];
-            chanel.messages.push(
-                {
-                    'data': message.data,
-                    'username': message.username
-                }
-            );
+            storeMessage(message.channel, {'data': message.data, 'username': message.username});
+
             chanel.container.getElementsByClassName('chatContent');
             var messageContainer = document.createElement('div');
-            var messageAuthor = document.createElement('span');
-            var messageText = document.createElement('p');
-
-            messageContainer.className = 'message-container';
-
+            var messageAuthor = document.createElement('p');
             messageAuthor.className = 'message-author';
+            var messageText = document.createElement('p');
+            messageText.className = 'message-text';
+
+            messageContainer.className = 'message message-container';
+
+            messageAuthor.className = 'message message-author';
             messageAuthor.innerHTML = message.username;
 
-            messageText.className = message.text;
             messageText.innerHTML = message.data;
 
             messageContainer.append(messageAuthor);
             messageContainer.append(messageText);
-            chanel.container.append(messageContainer);
+            chanel.container.prepend(messageContainer);
         }
     });
 
@@ -172,7 +179,7 @@ function chatContainerOnMouseDown(event) {
 function showOpenChatWindowButton() {
     var button = document.createElement('button');
     button.onclick = createEmptyChatContainer;
-    button.innerHTML = 'Connect';
+    button.innerHTML = 'Welcome \'' + username + '\' Click to connect chat';
 
     document.getElementById('username-form').remove();
     document.body.append(button);
@@ -187,7 +194,6 @@ function setName(event) {
 
 function checkUsernameIsSet(event) {
     username = localStorage.getItem('username');
-    console.log('called');
     if (username) {
         showOpenChatWindowButton();
     }

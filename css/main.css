@@ -1,12 +1,6 @@
-.chatBlock {
-    border: black;
-    border-width: 1px;
-    border-style: double;
-    width: 180px;
-    min-height: 150px;
-}
 .chatTitle{
     min-height: 20px;
+    text-align: center;
 }
 .chatMessageInput {
     max-width: 100px;
@@ -18,4 +12,79 @@
 .close-chat-window-button {
     width: 10%;
     float: right;
+}
+
+.chatBlock {
+    width: 250px;
+    min-height: 300px;
+    color: #1b1e21;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    background-color: #d6d8d9;
+    border-color: #c6c8ca;
+}
+.chat-button {
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+    margin: auto;
+    display: block;
+}
+.chanel-name-input, .chatMessageInput {
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    width: 100%;
+    margin: auto;
+    display: block;
+    min-width: 230px;
+}
+.message {
+    margin: auto !important;
+}
+
+.message-author {
+    color: #fff;
+    background-color: #007bff;
+    padding-right: .6em;
+    padding-left: .6em;
+    border-radius: 10rem;
+    display: inline-block;
+    font-size: 100%;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+}
+.message-text {
+    border-bottom-right-radius: .25rem;
+    border-bottom-left-radius: .25rem;
+    position: relative;
+    display: block;
+    padding: .75rem 1.25rem;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,.125);
+    box-sizing: border-box;
+}
+.messages-container {
+    overflow-y: scroll;
+    height: 300px;
 }
